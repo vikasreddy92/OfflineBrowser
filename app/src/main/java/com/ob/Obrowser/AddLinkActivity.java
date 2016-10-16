@@ -59,11 +59,13 @@ public class AddLinkActivity extends Activity {
         urlEditText = (EditText) findViewById(R.id.urlEditText);
 
         depthSpinner = (Spinner) findViewById(R.id.depthSpinner);
-        depthArrayAdapter = ArrayAdapter.createFromResource(this, R.array.depth_array, android.R.layout.simple_spinner_dropdown_item);
+        depthArrayAdapter = ArrayAdapter.createFromResource(this, R.array.depth_array,
+                android.R.layout.simple_spinner_dropdown_item);
         depthSpinner.setAdapter(depthArrayAdapter);
 
         maxLinksSpinner = (Spinner) findViewById(R.id.maxLinksSpinner);
-        maxLinksArrayAdapter = ArrayAdapter.createFromResource(this, R.array.max_links_array, android.R.layout.simple_spinner_dropdown_item);
+        maxLinksArrayAdapter = ArrayAdapter.createFromResource(this, R.array.max_links_array,
+                android.R.layout.simple_spinner_dropdown_item);
         maxLinksSpinner.setAdapter(maxLinksArrayAdapter);
 
         submitButton = (Button) findViewById(R.id.submitButton);
@@ -74,7 +76,6 @@ public class AddLinkActivity extends Activity {
         public void onClick(View view) {
             progressDialog = createProgressDialog(view.getContext());
             progressDialog.show();
-
             Thread thread = new Thread(runnableThread);
             thread.start();
         }
@@ -137,10 +138,9 @@ public class AddLinkActivity extends Activity {
         ListDBHelper listDBHelper = new ListDBHelper(AddLinkActivity.this);
         listDBHelper.additem(title);
 
-        if(depth == 1) {
+        if (depth == 1) {
             downloadData(url, title, maxLinks);
-        }
-        else if (depth == 2) {
+        } else if (depth == 2) {
             downloadData(url, title, maxLinks);
             downloadInnerLinks(url, title, maxLinks);
         } else if (depth > 2) {
@@ -163,7 +163,8 @@ public class AddLinkActivity extends Activity {
     }
 
     private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return (networkInfo == null || !networkInfo.isConnected());
     }
@@ -175,7 +176,8 @@ public class AddLinkActivity extends Activity {
     }
 
     private void downloadData(String url, String title, int maxLinks) {
-        HttpClient httpClient = url.startsWith("https") ? new NetworkManager().getClient() : new DefaultHttpClient();
+        HttpClient httpClient = url.startsWith("http://") ? new DefaultHttpClient() :
+                                                            new NetworkManager().getClient();
         HttpGet httpGet = getHttpGet(url);
         try {
             HttpResponse httpResponse = httpClient.execute(httpGet);
@@ -214,9 +216,9 @@ public class AddLinkActivity extends Activity {
             currentLinksCount++;
         } catch (IOException e) {
             displayMessage(getApplicationContext(), "Could not execute HttpClient.execute" + e.getMessage());
-        } catch (Exception e){
+        } catch (Exception e) {
             displayMessage(getApplicationContext(), "Could not save" + e.getMessage());
-        }finally {
+        } finally {
             Toast.makeText(getApplicationContext(), "Saving failed", Toast.LENGTH_LONG).show();
             httpGet.abort();
         }
@@ -225,7 +227,8 @@ public class AddLinkActivity extends Activity {
 
     private HttpGet getHttpGet(String url) {
         HttpGet httpGet = new HttpGet(url);
-        httpGet.setHeader("User-Agent", "Mozilla/5.0 (Linux; U; Android 2.3.5; en-us; ) AppleWebKit/533.1+ (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1");
+        httpGet.setHeader("User-Agent", "Mozilla/5.0 (Linux; U; Android 2.3.5; en-us; ) " +
+                "AppleWebKit/533.1+ (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1");
         httpGet.setHeader("Content-Type", "text/html");
         httpGet.setHeader("Accept", "text/html");
         httpGet.setHeader("Accept-Language", "en-us,en;q=0.8");
@@ -244,7 +247,8 @@ public class AddLinkActivity extends Activity {
                     break;
                 }
                 String tempURL = hrefElement.attr("abs:href").toString();
-                if (URLUtil.isValidUrl(tempURL) && URLUtil.isHttpUrl(tempURL) || URLUtil.isHttpsUrl(tempURL)) {
+                if (URLUtil.isValidUrl(tempURL) && URLUtil.isHttpUrl(tempURL) ||
+                        URLUtil.isHttpsUrl(tempURL)) {
                     downloadData(tempURL, title, maxLinks);
                     innerLinks.add(url);
                 }

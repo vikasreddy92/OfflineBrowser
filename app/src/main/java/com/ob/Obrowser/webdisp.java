@@ -50,6 +50,7 @@ public class webdisp extends Activity {
 
         Intent i = getIntent();
         String value = i.getStringExtra("title");
+
         final datab d1 = new datab(getApplication());
         final String res1 = d1.rlink(value);
         String base64 = null;
